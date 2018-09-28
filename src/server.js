@@ -4,18 +4,24 @@ const messages = require('./protos/hello_pb');
 const services = require('./protos/hello_grpc_pb');
 
 function world(call, callback) {
-  const { first, last } = call.request;
-  callback(null, messages.Welcome({
-    output: `Hello ${first} ${last}. I'm World!`
-  }));
+  const first = call.request.getFirst()
+  const last = call.request.getLast()
+
+  const welcome = new messages.Welcome()
+  welcome.setOutput(`Hello ${first} ${last}. I'm World!`)
+
+  callback(null, welcome);
 }
 
 function person(call, callback) {
-  call.on('data', function(name) {
-    const { first, last } = name;
-    call.write(messages.Welcome({
-      output: `Hello ${first} ${last}.`
-    }));
+  call.on('data', (name) => {
+    const first = name.getFirst()
+    const last = name.getLast()
+
+    const welcome = new messages.Welcome()
+    welcome.setOutput(`Hello ${first} ${last}. I'm World!`)
+
+    call.write(welcome)
   });
   call.on('end', () => call.end());
 }
