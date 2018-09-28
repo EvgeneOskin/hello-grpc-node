@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+service Hello {
+
+  rpc World(Name) returns (Welcome) {}
+
+  rpc Person(stream Name) returns (stream Welcome) {}
+}
+
+message Name {
+  string first = 1;
+  string last = 2;
+}
+
+message Welcome {
+  string output = 1;
+}
